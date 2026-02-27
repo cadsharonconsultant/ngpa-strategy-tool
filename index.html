@@ -9,17 +9,16 @@
     <style>
         :root { --ngpa-blue: #0038a8; --ngpa-gold: #f1c40f; --ngpa-red: #ce1126; --ngpa-green: #198754; }
         body { background-color: #f1f5f9; font-family: 'Inter', sans-serif; color: #1e293b; }
-        .section-header { border-left: 6px solid var(--ngpa-blue); background: #f0f4ff; padding: 15px; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-weight: 700; color: var(--ngpa-blue); }
+        .section-header { border-left: 6px solid var(--ngpa-blue); background: #f0f4ff; padding: 12px; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-weight: 700; color: var(--ngpa-blue); }
         .card { border: none; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); margin-bottom: 2rem; }
         .risk-cell { height: 50px; border: 2px solid #fff !important; cursor: pointer; transition: 0.2s; position: relative; }
+        .risk-cell:hover { transform: scale(1.05); z-index: 2; border-color: #000 !important; }
         .selected-risk { border: 4px solid #000 !important; box-shadow: inset 0 0 10px rgba(0,0,0,0.3); }
-        .selected-risk::after { content: '✔️'; font-size: 1.2rem; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .x-small { font-size: 0.75rem; }
         @media print {
             .no-print, .btn, .btn-group { display: none !important; }
             body { background: white; padding: 0; }
             .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; break-inside: avoid; }
-            input, textarea, select { border: none !important; background: transparent !important; padding: 0 !important; }
         }
     </style>
 </head>
@@ -31,7 +30,7 @@
             <h1 class="fw-black text-dark mb-0">NGPA <span class="text-primary">Strategic Planner</span></h1>
             <p class="text-muted small mb-0">RA 12009 Compliance Support (v1.0)</p>
         </div>
-        <div class="btn-group shadow-sm">
+        <div class="btn-group">
             <button class="btn btn-outline-primary fw-bold" onclick="loadSampleData()">🧪 Load Sample</button>
             <button class="btn btn-success fw-bold px-4" onclick="window.print()">📄 Export PDF</button>
         </div>
@@ -41,7 +40,7 @@
         <div class="card-body p-4 text-center">
             <div class="row align-items-center">
                 <div class="col-md-3 border-end border-secondary">
-                    <small class="text-secondary text-uppercase fw-bold d-block mb-1">Readiness</small>
+                    <small class="text-secondary text-uppercase fw-bold d-block mb-1">Project Readiness</small>
                     <h1 class="display-4 fw-black mb-0" id="readinessScore">0%</h1>
                 </div>
                 <div class="col-md-9 px-4 text-start">
@@ -49,8 +48,10 @@
                         <div id="readinessBar" class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: 0%"></div>
                     </div>
                     <div class="row small fw-bold mt-2 text-center">
-                        <div class="col" id="stat-1">⚪ Market</div><div class="col" id="stat-2">⚪ Logic</div>
-                        <div class="col" id="stat-3">⚪ Risk</div><div class="col" id="stat-4">⚪ Time</div>
+                        <div class="col" id="stat-1">⚪ Market</div>
+                        <div class="col" id="stat-2">⚪ Logic</div>
+                        <div class="col" id="stat-3">⚪ Risk</div>
+                        <div class="col" id="stat-4">⚪ Time</div>
                         <div class="col" id="stat-5">⚪ Disposal</div>
                     </div>
                 </div>
@@ -61,17 +62,38 @@
     <form id="ngpaForm">
         <div class="card shadow-sm"><div class="card-body">
             <div class="row g-3">
-                <div class="col-md-8"><label class="fw-bold small mb-1">PROJECT NAME</label><input type="text" id="projTitle" class="form-control form-control-lg bg-light border-0"></div>
-                <div class="col-md-4"><label class="fw-bold small mb-1">ABC (PHP)</label><input type="number" id="projABC" class="form-control form-control-lg bg-light border-0" oninput="runFfPLogic()"></div>
+                <div class="col-md-8">
+                    <label class="fw-bold small mb-1">PROJECT NAME / TITLE</label>
+                    <input type="text" id="projTitle" class="form-control form-control-lg bg-light border-0" oninput="updateReadiness()">
+                </div>
+                <div class="col-md-4">
+                    <label class="fw-bold small mb-1">APPROVED BUDGET (ABC)</label>
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text border-0 bg-light">PHP</span>
+                        <input type="number" id="projABC" class="form-control bg-light border-0" oninput="runFfPLogic()">
+                    </div>
+                </div>
             </div>
         </div></div>
 
+        <div class="card shadow-sm"><div class="card-body">
+            <h5 class="section-header">1. Market Scoping (Sec. 10)</h5>
+            <textarea id="marketLandscape" class="form-control bg-light border-0 mb-3" rows="3" placeholder="Analyze market depth and supplier availability..." oninput="updateReadiness()"></textarea>
+        </div></div>
+
         <div class="card border-primary shadow"><div class="card-body">
-            <h5 class="section-header text-primary">3. Fit-for-Purpose Analysis (Sec. 11)</h5>
-            <div class="row g-3 no-print mb-4 p-3 bg-light rounded border border-info border-opacity-25">
-                <div class="col-md-4"><label class="x-small fw-bold">COMPLEXITY</label><select id="inputComplexity" class="form-select border-0 shadow-sm" onchange="runFfPLogic()"><option value="low">Standard</option><option value="med">Specialized</option><option value="high">Innovative</option></select></div>
-                <div class="col-md-4"><label class="x-small fw-bold">MARKET DEPTH</label><select id="inputMarket" class="form-select border-0 shadow-sm" onchange="runFfPLogic()"><option value="many">Competitive</option><option value="few">Limited</option><option value="single">Single Source</option></select></div>
-                <div class="col-md-4"><label class="x-small fw-bold">BIDDING HISTORY</label><select id="inputHistory" class="form-select border-0 shadow-sm" onchange="runFfPLogic()"><option value="none">New Project</option><option value="failed2">Failed Bidding (2x)</option></select></div>
+            <h5 class="section-header text-primary">2. Fit-for-Purpose Analysis (Sec. 11)</h5>
+            <div class="row g-3 no-print mb-4 p-3 bg-light rounded">
+                <div class="col-md-6"><label class="x-small fw-bold">COMPLEXITY</label>
+                    <select id="inputComplexity" class="form-select border-0 shadow-sm" onchange="runFfPLogic()">
+                        <option value="low">Standard</option><option value="med">Specialized</option><option value="high">Innovative</option>
+                    </select>
+                </div>
+                <div class="col-md-6"><label class="x-small fw-bold">MARKET DEPTH</label>
+                    <select id="inputMarket" class="form-select border-0 shadow-sm" onchange="runFfPLogic()">
+                        <option value="many">Competitive</option><option value="few">Limited</option><option value="single">Single Source</option>
+                    </select>
+                </div>
             </div>
             <div id="ffpResultBox" class="p-4 rounded border-start border-5 shadow-sm" style="background: #f8fbff; border-color: #0d6efd;">
                 <h3 class="fw-black mb-1" id="suggestedModality">---</h3>
@@ -80,38 +102,57 @@
         </div></div>
 
         <div class="card shadow-sm border-danger"><div class="card-body">
-            <h5 class="section-header text-danger">4. Risk Assessment (3x3 Matrix)</h5>
-            <div class="row align-items-center">
+            <h5 class="section-header text-danger">3. Risk Assessment & Treatment (3x3 Matrix)</h5>
+            <div class="row g-4 align-items-center">
                 <div class="col-md-6">
-                    <table class="table table-bordered text-center m-0">
-                        <tr><td class="risk-cell bg-warning opacity-75" data-level="High" onclick="setRisk(this)"></td><td class="risk-cell bg-danger opacity-75" data-level="Extreme" onclick="setRisk(this)"></td><td class="risk-cell bg-danger" data-level="Critical" onclick="setRisk(this)"></td></tr>
-                        <tr><td class="risk-cell bg-success opacity-75" data-level="Medium" onclick="setRisk(this)"></td><td class="risk-cell bg-warning opacity-75" data-level="High" onclick="setRisk(this)"></td><td class="risk-cell bg-danger opacity-75" data-level="Extreme" onclick="setRisk(this)"></td></tr>
-                        <tr><td class="risk-cell bg-success" data-level="Low" onclick="setRisk(this)"></td><td class="risk-cell bg-success opacity-75" data-level="Medium" onclick="setRisk(this)"></td><td class="risk-cell bg-warning opacity-75" data-level="High" onclick="setRisk(this)"></td></tr>
-                    </table>
+                    <div class="d-flex">
+                        <div class="text-uppercase fw-bold text-muted x-small me-2 d-flex align-items-center" style="writing-mode: vertical-rl; transform: rotate(180deg);">Impact →</div>
+                        <div class="flex-grow-1">
+                            <table class="table table-bordered text-center m-0 shadow-sm" style="table-layout: fixed; border: 2px solid #dee2e6;">
+                                <tr>
+                                    <td class="risk-cell bg-warning opacity-75" data-level="High" onclick="setRisk(this)"></td>
+                                    <td class="risk-cell bg-danger opacity-75" data-level="Extreme" onclick="setRisk(this)"></td>
+                                    <td class="risk-cell bg-danger" data-level="Critical" onclick="setRisk(this)"></td>
+                                </tr>
+                                <tr>
+                                    <td class="risk-cell bg-success opacity-75" data-level="Medium" onclick="setRisk(this)"></td>
+                                    <td class="risk-cell bg-warning opacity-75" data-level="High" onclick="setRisk(this)"></td>
+                                    <td class="risk-cell bg-danger opacity-75" data-level="Extreme" onclick="setRisk(this)"></td>
+                                </tr>
+                                <tr>
+                                    <td class="risk-cell bg-success" data-level="Low" onclick="setRisk(this)"></td>
+                                    <td class="risk-cell bg-success opacity-75" data-level="Medium" onclick="setRisk(this)"></td>
+                                    <td class="risk-cell bg-warning opacity-75" data-level="High" onclick="setRisk(this)"></td>
+                                </tr>
+                            </table>
+                            <div class="text-center text-uppercase fw-bold text-muted x-small mt-2">Likelihood →</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-6">
-                    <div id="riskDisplayBox" class="p-3 rounded bg-light border-start border-5">
-                        <h6 class="fw-bold mb-1">Level: <span id="riskLabel" class="text-uppercase">SELECT</span></h6>
-                        <p id="riskStrategy" class="small text-muted mb-0">Timeline buffer adjusts based on risk level.</p>
+                    <div id="riskDisplayBox" class="p-3 rounded-4 border-start border-5 h-100 bg-light" style="border-color: #dee2e6;">
+                        <h6 class="fw-bold mb-1">Risk Level: <span id="riskLabel" class="text-muted text-uppercase">SELECT CELL</span></h6>
+                        <hr class="my-2">
+                        <p id="riskStrategy" class="small text-muted mb-0 italic">Click a cell to generate the treatment plan.</p>
                     </div>
                 </div>
             </div>
         </div></div>
 
         <div class="card shadow-sm border-info"><div class="card-body">
-            <h5 class="section-header text-info">6. PhilGEPS Milestones</h5>
+            <h5 class="section-header text-info">4. PhilGEPS Milestones</h5>
             <input type="date" id="targetPostDate" class="form-control bg-light border-0 mb-3" onchange="runFfPLogic()">
             <div class="row g-2 text-center text-uppercase x-small fw-bold">
-                <div class="col-4 p-2 bg-light rounded">Submission<div id="dateSub" class="text-primary h6 mb-0 mt-1">---</div></div>
-                <div class="col-4 p-2 bg-light rounded">Award (Max)<div id="dateAward" class="text-success h6 mb-0 mt-1">---</div></div>
-                <div class="col-4 p-2 bg-light rounded">Contract<div id="dateCon" class="text-dark h6 mb-0 mt-1">---</div></div>
+                <div class="col-4 p-2 bg-light rounded border">Submission Deadline<div id="dateSub" class="text-primary h6 mb-0 mt-1">---</div></div>
+                <div class="col-4 p-2 bg-light rounded border">Award (Max)<div id="dateAward" class="text-success h6 mb-0 mt-1">---</div></div>
+                <div class="col-4 p-2 bg-light rounded border">Contract<div id="dateCon" class="text-dark h6 mb-0 mt-1">---</div></div>
             </div>
         </div></div>
 
         <div class="card border-primary bg-light bg-opacity-50"><div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="section-header text-primary m-0">12. Strategic Justification</h5>
-                <button type="button" class="btn btn-sm btn-outline-primary no-print fw-bold" onclick="generateNarrative()">📝 Generate Narrative</button>
+                <h5 class="section-header text-primary m-0">5. Strategic Justification Narrative</h5>
+                <button type="button" class="btn btn-sm btn-outline-primary no-print fw-bold" onclick="generateNarrative()">📝 Refresh Narrative</button>
             </div>
             <div id="narrativeBox" class="p-3 bg-white border rounded small" style="font-family: 'Georgia', serif; line-height: 1.6;">---</div>
         </div></div>
@@ -125,11 +166,9 @@ function runFfPLogic() {
     const abc = parseFloat(document.getElementById('projABC').value) || 0;
     const comp = document.getElementById('inputComplexity').value;
     const mark = document.getElementById('inputMarket').value;
-    const hist = document.getElementById('inputHistory').value;
 
     let mod = "Competitive Bidding"; let color = "#0038a8";
-    if (hist === 'failed2') { mod = "Negotiated (2-Failed Biddings)"; color = "#862e9c"; }
-    else if (mark === 'single') { mod = "Direct Sales"; color = "#fd7e14"; }
+    if (mark === 'single') { mod = "Direct Sales"; color = "#fd7e14"; }
     else if (comp === 'high' && abc > 50000000) { mod = "Competitive Dialogue"; color = "#6610f2"; }
     else if (abc <= 1000000) { mod = "SVP / Shopping"; color = "#495057"; }
 
@@ -137,6 +176,33 @@ function runFfPLogic() {
     document.getElementById('suggestedModality').style.color = color;
     document.getElementById('ffpResultBox').style.borderColor = color;
     calculateTimelines();
+    updateReadiness();
+}
+
+function setRisk(el) {
+    document.querySelectorAll('.risk-cell').forEach(c => { c.classList.remove('selected-risk'); c.innerHTML = ""; });
+    el.classList.add('selected-risk'); el.innerHTML = "✔️";
+    
+    const lvl = el.getAttribute('data-level').toUpperCase();
+    const label = document.getElementById('riskLabel');
+    const strategy = document.getElementById('riskStrategy');
+    const box = document.getElementById('riskDisplayBox');
+    
+    label.innerText = lvl;
+    let color = "#6c757d"; let desc = "";
+
+    if (lvl === 'CRITICAL' || lvl === 'EXTREME') {
+        color = "#dc3545"; desc = "<strong>MITIGATE:</strong> High-risk profile. Mandatory Pre-Procurement and intensive Post-Qualification required.";
+    } else if (lvl === 'HIGH') {
+        color = "#fd7e14"; desc = "<strong>TRANSFER:</strong> Use strict SLAs and comprehensive liquidated damages clauses.";
+    } else {
+        color = "#198754"; desc = "<strong>ACCEPT:</strong> Routine oversight sufficient for standard procurement.";
+    }
+
+    label.style.color = color; box.style.borderColor = color; strategy.innerHTML = desc;
+    calculateTimelines();
+    updateReadiness();
+    generateNarrative();
 }
 
 function calculateTimelines() {
@@ -154,20 +220,22 @@ function calculateTimelines() {
     document.getElementById('dateCon').innerText = con.toLocaleDateString(undefined, opt);
 }
 
-function setRisk(el) {
-    document.querySelectorAll('.risk-cell').forEach(c => { c.classList.remove('selected-risk'); c.innerHTML = ""; });
-    el.classList.add('selected-risk'); el.innerHTML = "✔️";
-    const lvl = el.dataset.level;
-    document.getElementById('riskLabel').innerText = lvl;
-    document.getElementById('riskDisplayBox').style.borderColor = (lvl === 'Critical' || lvl === 'Extreme') ? '#dc3545' : '#198754';
-    calculateTimelines();
-}
-
 function generateNarrative() {
     const title = document.getElementById('projTitle').value || "[Project]";
     const mod = document.getElementById('suggestedModality').innerText;
     const risk = document.getElementById('riskLabel').innerText;
-    document.getElementById('narrativeBox').innerHTML = `<p>Pursuant to <strong>RA 12009</strong>, the strategy for <strong>${title}</strong> utilizes <strong>${mod}</strong>. Given the <strong>${risk} Risk</strong> profile, timelines have been adjusted to ensure rigorous evaluation and Value for Money.</p>`;
+    document.getElementById('narrativeBox').innerHTML = `<p>Pursuant to <strong>RA 12009</strong>, the strategy for <strong>${title}</strong> utilizes <strong>${mod}</strong>. Given the <strong>${risk} Risk</strong> profile, timelines are set to ensure Value for Money.</p>`;
+}
+
+function updateReadiness() {
+    let s = 0;
+    if (document.getElementById('marketLandscape').value.length > 5) { s += 20; document.getElementById('stat-1').innerHTML = "🟢 Market"; }
+    if (document.getElementById('suggestedModality').innerText !== "---") { s += 20; document.getElementById('stat-2').innerHTML = "🟢 Logic"; }
+    if (document.querySelector('.selected-risk')) { s += 20; document.getElementById('stat-3').innerHTML = "🟢 Risk"; }
+    if (document.getElementById('targetPostDate').value) { s += 20; document.getElementById('stat-4').innerHTML = "🟢 Time"; }
+    if (document.getElementById('projTitle').value.length > 3) { s += 20; document.getElementById('stat-5').innerHTML = "🟢 Title"; }
+    document.getElementById('readinessScore').innerText = s + "%";
+    document.getElementById('readinessBar').style.width = s + "%";
 }
 </script>
 
