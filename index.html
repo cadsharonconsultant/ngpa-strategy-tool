@@ -9,14 +9,12 @@
     <style>
         :root { --ngpa-blue: #0038a8; --ngpa-gold: #f1c40f; --ngpa-red: #ce1126; --ngpa-green: #198754; }
         body { background-color: #f1f5f9; font-family: 'Inter', sans-serif; color: #1e293b; }
-        .section-header { border-left: 6px solid var(--ngpa-blue); background: #eef2ff; padding: 12px; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-weight: 700; color: var(--ngpa-blue); }
+        .section-header { border-left: 6px solid var(--ngpa-blue); background: #f0f4ff; padding: 15px; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-weight: 700; color: var(--ngpa-blue); }
         .card { border: none; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); margin-bottom: 2rem; }
-        .risk-cell { height: 55px; border: 2px solid #fff !important; cursor: pointer; transition: 0.2s; position: relative; }
+        .risk-cell { height: 50px; border: 2px solid #fff !important; cursor: pointer; transition: 0.2s; position: relative; }
         .selected-risk { border: 4px solid #000 !important; box-shadow: inset 0 0 10px rgba(0,0,0,0.3); }
         .selected-risk::after { content: '✔️'; font-size: 1.2rem; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .bg-emarket { background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%); border: 1px solid #10b981; }
         .x-small { font-size: 0.75rem; }
-        
         @media print {
             .no-print, .btn, .btn-group { display: none !important; }
             body { background: white; padding: 0; }
@@ -31,12 +29,11 @@
     <div class="d-flex justify-content-between align-items-center mb-4 no-print">
         <div>
             <h1 class="fw-black text-dark mb-0">NGPA <span class="text-primary">Strategic Planner</span></h1>
-            <p class="text-muted small mb-0">RA 12009 Compliance Decision Support System (v1.0)</p>
+            <p class="text-muted small mb-0">RA 12009 Compliance Support (v1.0)</p>
         </div>
         <div class="btn-group shadow-sm">
-            <button class="btn btn-dark fw-bold" data-bs-toggle="modal" data-bs-target="#helpModal">📖 Help Guide</button>
             <button class="btn btn-outline-primary fw-bold" onclick="loadSampleData()">🧪 Load Sample</button>
-            <button class="btn btn-success fw-bold px-4" onclick="window.print()">📄 Export PDF Report</button>
+            <button class="btn btn-success fw-bold px-4" onclick="window.print()">📄 Export PDF</button>
         </div>
     </div>
 
@@ -44,7 +41,7 @@
         <div class="card-body p-4 text-center">
             <div class="row align-items-center">
                 <div class="col-md-3 border-end border-secondary">
-                    <small class="text-secondary text-uppercase fw-bold d-block mb-1">Project Readiness</small>
+                    <small class="text-secondary text-uppercase fw-bold d-block mb-1">Readiness</small>
                     <h1 class="display-4 fw-black mb-0" id="readinessScore">0%</h1>
                 </div>
                 <div class="col-md-9 px-4 text-start">
@@ -52,10 +49,8 @@
                         <div id="readinessBar" class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: 0%"></div>
                     </div>
                     <div class="row small fw-bold mt-2 text-center">
-                        <div class="col" id="stat-1">⚪ Market</div>
-                        <div class="col" id="stat-2">⚪ Logic</div>
-                        <div class="col" id="stat-3">⚪ Risk</div>
-                        <div class="col" id="stat-4">⚪ Time</div>
+                        <div class="col" id="stat-1">⚪ Market</div><div class="col" id="stat-2">⚪ Logic</div>
+                        <div class="col" id="stat-3">⚪ Risk</div><div class="col" id="stat-4">⚪ Time</div>
                         <div class="col" id="stat-5">⚪ Disposal</div>
                     </div>
                 </div>
@@ -66,313 +61,114 @@
     <form id="ngpaForm">
         <div class="card shadow-sm"><div class="card-body">
             <div class="row g-3">
-                <div class="col-md-8">
-                    <label class="fw-bold small mb-1">PROJECT NAME / TITLE</label>
-                    <input type="text" id="projTitle" class="form-control form-control-lg bg-light border-0" placeholder="e.g., Procurement of Smart Grid Solutions">
-                </div>
-                <div class="col-md-4">
-                    <label class="fw-bold small mb-1">APPROVED BUDGET (ABC)</label>
-                    <div class="input-group input-group-lg">
-                        <span class="input-group-text border-0 bg-light">PHP</span>
-                        <input type="number" id="projABC" class="form-control bg-light border-0" oninput="runFfPLogic()">
-                    </div>
-                </div>
+                <div class="col-md-8"><label class="fw-bold small mb-1">PROJECT NAME</label><input type="text" id="projTitle" class="form-control form-control-lg bg-light border-0"></div>
+                <div class="col-md-4"><label class="fw-bold small mb-1">ABC (PHP)</label><input type="number" id="projABC" class="form-control form-control-lg bg-light border-0" oninput="runFfPLogic()"></div>
             </div>
         </div></div>
-
-        <div class="row g-3 mb-4">
-            <div class="col-md-7">
-                <div class="card shadow-sm h-100"><div class="card-body">
-                    <h5 class="section-header">1. Market Scoping (Sec. 10)</h5>
-                    <textarea id="marketLandscape" class="form-control bg-light border-0 mb-3" rows="3" placeholder="Identify market depth, price trends, and supplier landscape..."></textarea>
-                    <div class="row g-2">
-                        <div class="col-6"><label class="small fw-bold">Price Volatility</label><select id="priceTrend" class="form-select bg-light border-0"><option>Stable</option><option>High Volatility</option><option>Decreasing</option></select></div>
-                    </div>
-                </div></div>
-            </div>
-            <div class="col-md-5">
-                <div class="card bg-emarket h-100 shadow-sm border-0"><div class="card-body">
-                    <h5 class="section-header text-success" style="border-left-color: var(--ngpa-green);">2. e-Marketplace Check</h5>
-                    <p class="small text-muted mb-3">Is this item available in the PhilGEPS e-Marketplace?</p>
-                    <div class="btn-group w-100 mb-3 no-print">
-                        <button type="button" id="btnEmYes" class="btn btn-sm btn-outline-success" onclick="toggleEmarket(true)">Yes (Listed)</button>
-                        <button type="button" id="btnEmNo" class="btn btn-sm btn-outline-secondary" onclick="toggleEmarket(false)">No (Not Found)</button>
-                    </div>
-                    <div id="emarkAlert" class="alert alert-success p-2 small d-none mb-0 fw-bold">
-                        ✨ Priority Action: Use Direct Acquisition (Sec. 31).
-                    </div>
-                </div></div>
-            </div>
-        </div>
 
         <div class="card border-primary shadow"><div class="card-body">
-            <h5 class="section-header text-primary">3. Fit-for-Purpose & Proportionality Analysis (Sec. 11)</h5>
+            <h5 class="section-header text-primary">3. Fit-for-Purpose Analysis (Sec. 11)</h5>
             <div class="row g-3 no-print mb-4 p-3 bg-light rounded border border-info border-opacity-25">
-                <div class="col-md-3">
-                    <label class="x-small fw-bold">PROJECT TYPE</label>
-                    <select id="inputType" class="form-select border-0 shadow-sm" onchange="runFfPLogic()">
-                        <option value="goods">Goods & Services</option><option value="infra">Infrastructure</option><option value="consultancy">Consultancy</option><option value="cse">Common-Use (CSE)</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="x-small fw-bold">COMPLEXITY</label>
-                    <select id="inputComplexity" class="form-select border-0 shadow-sm" onchange="runFfPLogic()">
-                        <option value="low">Standard</option><option value="med">Specialized</option><option value="high">Innovative/High-Tech</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="x-small fw-bold">URGENCY / HISTORY</label>
-                    <select id="inputHistory" class="form-select border-0 shadow-sm" onchange="runFfPLogic()">
-                        <option value="planned">Planned / Routine</option><option value="urgent">Emergency / Urgent</option><option value="failed2">Failed Bidding (2nd Attempt)</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="x-small fw-bold">MARKET DEPTH</label>
-                    <select id="inputMarket" class="form-select border-0 shadow-sm" onchange="runFfPLogic()">
-                        <option value="many">Competitive</option><option value="few">Restricted Market</option><option value="single">Single Source/Proprietary</option>
-                    </select>
-                </div>
+                <div class="col-md-4"><label class="x-small fw-bold">COMPLEXITY</label><select id="inputComplexity" class="form-select border-0 shadow-sm" onchange="runFfPLogic()"><option value="low">Standard</option><option value="med">Specialized</option><option value="high">Innovative</option></select></div>
+                <div class="col-md-4"><label class="x-small fw-bold">MARKET DEPTH</label><select id="inputMarket" class="form-select border-0 shadow-sm" onchange="runFfPLogic()"><option value="many">Competitive</option><option value="few">Limited</option><option value="single">Single Source</option></select></div>
+                <div class="col-md-4"><label class="x-small fw-bold">BIDDING HISTORY</label><select id="inputHistory" class="form-select border-0 shadow-sm" onchange="runFfPLogic()"><option value="none">New Project</option><option value="failed2">Failed Bidding (2x)</option></select></div>
             </div>
-
             <div id="ffpResultBox" class="p-4 rounded border-start border-5 shadow-sm" style="background: #f8fbff; border-color: #0d6efd;">
-                <div class="row align-items-center">
-                    <div class="col-md-9">
-                        <div class="d-flex align-items-center mb-1">
-                            <h3 class="fw-black mb-0 me-3" id="suggestedModality">---</h3>
-                            <span id="propBadge" class="badge rounded-pill">---</span>
-                        </div>
-                        <p id="modalityJustification" class="small text-muted mb-0 italic">Update settings to see legal justification.</p>
-                    </div>
-                    <div class="col-md-3 text-center border-start border-light d-none d-md-block">
-                        <div id="modalityIcon" style="font-size: 2.5rem;">⚖️</div>
+                <h3 class="fw-black mb-1" id="suggestedModality">---</h3>
+                <p id="modalityJustification" class="small text-muted mb-0 italic">Select parameters to see justification.</p>
+            </div>
+        </div></div>
+
+        <div class="card shadow-sm border-danger"><div class="card-body">
+            <h5 class="section-header text-danger">4. Risk Assessment (3x3 Matrix)</h5>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <table class="table table-bordered text-center m-0">
+                        <tr><td class="risk-cell bg-warning opacity-75" data-level="High" onclick="setRisk(this)"></td><td class="risk-cell bg-danger opacity-75" data-level="Extreme" onclick="setRisk(this)"></td><td class="risk-cell bg-danger" data-level="Critical" onclick="setRisk(this)"></td></tr>
+                        <tr><td class="risk-cell bg-success opacity-75" data-level="Medium" onclick="setRisk(this)"></td><td class="risk-cell bg-warning opacity-75" data-level="High" onclick="setRisk(this)"></td><td class="risk-cell bg-danger opacity-75" data-level="Extreme" onclick="setRisk(this)"></td></tr>
+                        <tr><td class="risk-cell bg-success" data-level="Low" onclick="setRisk(this)"></td><td class="risk-cell bg-success opacity-75" data-level="Medium" onclick="setRisk(this)"></td><td class="risk-cell bg-warning opacity-75" data-level="High" onclick="setRisk(this)"></td></tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <div id="riskDisplayBox" class="p-3 rounded bg-light border-start border-5">
+                        <h6 class="fw-bold mb-1">Level: <span id="riskLabel" class="text-uppercase">SELECT</span></h6>
+                        <p id="riskStrategy" class="small text-muted mb-0">Timeline buffer adjusts based on risk level.</p>
                     </div>
                 </div>
             </div>
         </div></div>
 
-        <div class="row g-3 mb-4">
-            <div class="col-md-6">
-                <div class="card h-100 shadow-sm border-danger"><div class="card-body">
-                    <h5 class="section-header text-danger">4. Risk Management (Sec. 11)</h5>
-                    <table class="table table-bordered text-center m-0" style="table-layout: fixed;">
-                        <tr><td class="risk-cell bg-warning" data-level="High" onclick="setRisk(this)"></td><td class="risk-cell bg-danger" data-level="Extreme" onclick="setRisk(this)"></td></tr>
-                        <tr><td class="risk-cell bg-success" data-level="Low" onclick="setRisk(this)"></td><td class="risk-cell bg-warning" data-level="Medium" onclick="setRisk(this)"></td></tr>
-                    </table>
-                    <div class="mt-3 p-3 bg-light rounded x-small border">
-                        <strong>Strategy:</strong> <span id="riskStrategy">Select a cell in the matrix.</span>
-                    </div>
-                </div></div>
+        <div class="card shadow-sm border-info"><div class="card-body">
+            <h5 class="section-header text-info">6. PhilGEPS Milestones</h5>
+            <input type="date" id="targetPostDate" class="form-control bg-light border-0 mb-3" onchange="runFfPLogic()">
+            <div class="row g-2 text-center text-uppercase x-small fw-bold">
+                <div class="col-4 p-2 bg-light rounded">Submission<div id="dateSub" class="text-primary h6 mb-0 mt-1">---</div></div>
+                <div class="col-4 p-2 bg-light rounded">Award (Max)<div id="dateAward" class="text-success h6 mb-0 mt-1">---</div></div>
+                <div class="col-4 p-2 bg-light rounded">Contract<div id="dateCon" class="text-dark h6 mb-0 mt-1">---</div></div>
             </div>
-            <div class="col-md-6">
-                <div class="card h-100 shadow-sm border-warning"><div class="card-body">
-                    <h5 class="section-header text-warning">5. Disposal Strategy (Sec. 13)</h5>
-                    <label class="small fw-bold">Primary Method</label>
-                    <select id="disposalMethod" class="form-select border-0 bg-light mb-2">
-                        <option value="Trade-in">Buy-back / Trade-in</option><option value="Auction">Public Auction</option><option value="Recycling">Certified Green Recycling</option>
-                    </select>
-                    <textarea id="disposalSpecs" class="form-control border-0 bg-light" rows="3" placeholder="End-of-life requirements for the PBD..." oninput="updateReadiness()"></textarea>
-                </div></div>
-            </div>
-        </div>
-
-        <div class="row g-3 mb-4">
-            <div class="col-md-7">
-                <div class="card shadow-sm h-100 border-info"><div class="card-body">
-                    <h5 class="section-header text-info">6. PhilGEPS Milestone Tracker</h5>
-                    <label class="small fw-bold mb-2">Planned Posting Date</label>
-                    <input type="date" id="targetPostDate" class="form-control bg-light border-0 mb-3" onchange="runFfPLogic()">
-                    <div class="row g-2 text-center text-uppercase x-small fw-bold">
-                        <div class="col-4 p-2 bg-light rounded border">Submission Deadline<div id="dateSub" class="text-primary h6 mb-0 mt-1">---</div></div>
-                        <div class="col-4 p-2 bg-light rounded border">NOA (Max Period)<div id="dateAward" class="text-success h6 mb-0 mt-1">---</div></div>
-                        <div class="col-4 p-2 bg-light rounded border">Contract signing<div id="dateCon" class="text-dark h6 mb-0 mt-1">---</div></div>
-                    </div>
-                </div></div>
-            </div>
-            <div class="col-md-5">
-                <div class="card shadow-sm h-100"><div class="card-body">
-                    <h5 class="section-header">7. Bidders' Checklist (Dynamic)</h5>
-                    <div class="x-small">
-                        <h6 class="fw-bold border-bottom pb-1 mb-2">Technical Documents</h6>
-                        <div id="bidderTech" class="mb-3 text-muted">---</div>
-                        <h6 class="fw-bold border-bottom pb-1 mb-2">Financial Documents</h6>
-                        <div id="bidderFin" class="text-muted">---</div>
-                    </div>
-                </div></div>
-            </div>
-        </div>
+        </div></div>
 
         <div class="card border-primary bg-light bg-opacity-50"><div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="section-header text-primary m-0">8. Strategic Justification Narrative</h5>
+                <h5 class="section-header text-primary m-0">12. Strategic Justification</h5>
                 <button type="button" class="btn btn-sm btn-outline-primary no-print fw-bold" onclick="generateNarrative()">📝 Generate Narrative</button>
             </div>
-            <div id="narrativeBox" class="p-3 bg-white border rounded shadow-inner small" style="font-family: 'Georgia', serif; line-height: 1.8;">
-                <p class="text-center italic text-muted">Complete the form and click "Generate Narrative" for the BAC Resolution.</p>
-            </div>
+            <div id="narrativeBox" class="p-3 bg-white border rounded small" style="font-family: 'Georgia', serif; line-height: 1.6;">---</div>
         </div></div>
-
-        <div class="card border-0 shadow-none mt-5 pt-4 bg-transparent">
-            <div class="row g-4 text-center">
-                <div class="col-md-4">
-                    <div class="d-print-none mb-3"><input type="text" class="form-control form-control-sm text-center border-0 bg-light" placeholder="Project Lead Name"></div>
-                    <div class="border-top border-dark pt-1">
-                        <small class="fw-bold d-block">Prepared By:</small>
-                        <small class="x-small">End-User / Project Lead</small>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="d-print-none mb-3"><input type="text" class="form-control form-control-sm text-center border-0 bg-light" placeholder="BAC Secretariat Name"></div>
-                    <div class="border-top border-dark pt-1">
-                        <small class="fw-bold d-block">Reviewed By:</small>
-                        <small class="x-small">BAC Secretariat Head</small>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="d-print-none mb-3"><input type="text" class="form-control form-control-sm text-center border-0 bg-light" placeholder="HoPE Name"></div>
-                    <div class="border-top border-dark pt-1">
-                        <small class="fw-bold d-block">Approved By:</small>
-                        <small class="x-small">Head of Procuring Entity</small>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center mt-4 x-small text-muted">
-                System Timestamp: <span id="currentTimestamp"></span> | Compliance Tool RA 12009
-            </div>
-        </div>
     </form>
 </div>
 
-<div class="modal fade" id="helpModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content border-0 shadow-lg">
-    <div class="modal-header bg-dark text-white"><h5 class="modal-title fw-bold">RA 12009 Decision Matrix</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
-    <div class="modal-body p-4 small">
-        <p><strong>Strategic Planning:</strong> Under NGPA, you must justify your ABC and Modality choice via a market scoping exercise (Sec. 10).</p>
-        <p><strong>Proportionality:</strong> The effort of procurement must match the risk and value (Sec. 11).</p>
-    </div>
-</div></div></div>
-
 <script>
-// INITIALIZE
-window.addEventListener('DOMContentLoaded', () => { 
-    runFfPLogic();
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    document.getElementById('currentTimestamp').innerText = new Date().toLocaleDateString('en-PH', options);
-});
+window.addEventListener('DOMContentLoaded', () => { runFfPLogic(); });
 
-// LOGIC ENGINES
 function runFfPLogic() {
     const abc = parseFloat(document.getElementById('projABC').value) || 0;
-    const type = document.getElementById('inputType').value;
     const comp = document.getElementById('inputComplexity').value;
-    const market = document.getElementById('inputMarket').value;
+    const mark = document.getElementById('inputMarket').value;
     const hist = document.getElementById('inputHistory').value;
 
-    let mod = "Competitive Bidding"; let just = "Sec. 10: Default transparent modality for standard projects."; let icon = "⚖️"; let color = "#0038a8";
-
-    if (hist === 'failed2') { mod = "Negotiated (Two Failed Biddings)"; just = "Sec 35.1: Negotiate after two failed attempts."; color = "#862e9c"; icon = "🔄"; }
-    else if (hist === 'urgent') { mod = "Negotiated (Emergency)"; just = "Sec 35.2: Expedited procurement for safety/calamity."; color = "#ce1126"; icon = "🚨"; }
-    else if (type === 'cse') { mod = "Direct Acquisition"; just = "Sec 31: Mandatory for items in e-Marketplace."; color = "#198754"; icon = "🛒"; }
-    else if (market === 'single') { mod = "Direct Sales"; just = "Sec 32: Proprietary goods or exclusive maker."; color = "#fd7e14"; icon = "🎯"; }
-    else if (comp === 'high' && abc > 50000000) { mod = "Competitive Dialogue"; just = "Sec 11: Multi-stage dialogue for innovation."; color = "#6610f2"; icon = "🗣️"; }
-    else if (abc <= 1000000 && type !== 'infra') { mod = "SVP / Shopping"; just = "Alternative modality for low-value items."; color = "#495057"; icon = "📦"; }
+    let mod = "Competitive Bidding"; let color = "#0038a8";
+    if (hist === 'failed2') { mod = "Negotiated (2-Failed Biddings)"; color = "#862e9c"; }
+    else if (mark === 'single') { mod = "Direct Sales"; color = "#fd7e14"; }
+    else if (comp === 'high' && abc > 50000000) { mod = "Competitive Dialogue"; color = "#6610f2"; }
+    else if (abc <= 1000000) { mod = "SVP / Shopping"; color = "#495057"; }
 
     document.getElementById('suggestedModality').innerText = mod;
     document.getElementById('suggestedModality').style.color = color;
-    document.getElementById('modalityJustification').innerText = just;
-    document.getElementById('modalityIcon').innerText = icon;
     document.getElementById('ffpResultBox').style.borderColor = color;
-
-    // Proportionality Badge
-    const badge = document.getElementById('propBadge');
-    if (abc > 50000000 && (mod.includes("SVP"))) { badge.innerText = "HIGH RISK"; badge.className = "badge bg-danger ms-2"; }
-    else if (abc < 1000000 && mod.includes("Dialogue")) { badge.innerText = "INEFFICIENT"; badge.className = "badge bg-warning text-dark ms-2"; }
-    else { badge.innerText = "PROPORTIONAL"; badge.className = "badge bg-success ms-2"; }
-
-    updateChecklist(mod);
     calculateTimelines();
-    updateReadiness();
-}
-
-function updateChecklist(mod) {
-    const tech = document.getElementById('bidderTech');
-    const fin = document.getElementById('bidderFin');
-    let techItems = ["• PhilGEPS Platinum Certificate", "• Omnibus Sworn Statement"];
-    let finItems = ["• Bid Form (Price Proposal)"];
-    if (mod.includes("Bidding")) { techItems.push("• Statement of SLCC", "• Bid Security"); finItems.push("• NFCC Computation"); } 
-    else if (mod.includes("Dialogue")) { techItems.push("• Tech Solution Stage 1"); }
-    else if (mod.includes("SVP")) { techItems = ["• PhilGEPS Reg. Number", "• Omnibus Sworn Statement"]; }
-    tech.innerHTML = techItems.join("<br>");
-    fin.innerHTML = finItems.join("<br>");
 }
 
 function calculateTimelines() {
     const d = document.getElementById('targetPostDate').value; if (!d) return;
-    const post = new Date(d); const mod = document.getElementById('suggestedModality').innerText;
-    let postDays = 20; let awardDays = 90;
-    if (mod.includes("SVP") || mod.includes("Negotiated")) { postDays = 3; awardDays = 30; }
-    const sub = new Date(post); sub.setDate(post.getDate() + postDays);
+    const risk = document.getElementById('riskLabel').innerText;
+    let postDays = 20; let awardDays = (risk === 'CRITICAL' || risk === 'EXTREME') ? 120 : 90;
+    
+    const sub = new Date(d); sub.setDate(sub.getDate() + postDays);
     const awd = new Date(sub); awd.setDate(sub.getDate() + awardDays);
     const con = new Date(awd); con.setDate(awd.getDate() + 10);
+    
     const opt = { month: 'short', day: 'numeric', year: 'numeric' };
     document.getElementById('dateSub').innerText = sub.toLocaleDateString(undefined, opt);
     document.getElementById('dateAward').innerText = awd.toLocaleDateString(undefined, opt);
     document.getElementById('dateCon').innerText = con.toLocaleDateString(undefined, opt);
 }
 
-function generateNarrative() {
-    const title = document.getElementById('projTitle').value || "[Project Name]";
-    const abc = parseFloat(document.getElementById('projABC').value) || 0;
-    const mod = document.getElementById('suggestedModality').innerText;
-    const landscape = document.getElementById('marketLandscape').value || "[Market Scoping Data]";
-    const comp = document.getElementById('inputComplexity').value;
-    const risk = document.getElementById('riskLabel').innerText || "TBD";
-    const disposal = document.getElementById('disposalMethod').value;
-    let narrative = `
-        <p><strong>SUBJECT: STRATEGIC PROCUREMENT JUSTIFICATION</strong></p>
-        <p>Pursuant to <strong>RA 12009</strong>, the Procuring Entity conducted strategic planning for <strong>${title}</strong> (ABC: PHP ${abc.toLocaleString()}).</p>
-        <p><strong>Market Analysis:</strong> Scoping reveals a market described as <em>"${landscape}"</em>. Due to its ${comp} complexity, the strategy prioritizes <strong>Value for Money</strong>.</p>
-        <p><strong>Modality Selection:</strong> The modality <strong>${mod}</strong> is selected as the most proportional approach for the identified <strong>${risk} Risk</strong> profile.</p>
-        <p><strong>LCC & Disposal:</strong> A <strong>${disposal}</strong> strategy is adopted to optimize the total cost of ownership and environmental impact.</p>
-    `;
-    document.getElementById('narrativeBox').innerHTML = narrative;
-    updateReadiness();
-}
-
 function setRisk(el) {
-    document.querySelectorAll('.risk-cell').forEach(c => c.classList.remove('selected-risk'));
-    el.classList.add('selected-risk'); 
-    document.getElementById('riskLabel').innerText = el.dataset.level;
-    document.getElementById('riskStrategy').innerText = el.dataset.level === 'Extreme' ? "MITIGATE: Requires Pre-Procurement Conference." : "MONITOR.";
-    updateReadiness();
+    document.querySelectorAll('.risk-cell').forEach(c => { c.classList.remove('selected-risk'); c.innerHTML = ""; });
+    el.classList.add('selected-risk'); el.innerHTML = "✔️";
+    const lvl = el.dataset.level;
+    document.getElementById('riskLabel').innerText = lvl;
+    document.getElementById('riskDisplayBox').style.borderColor = (lvl === 'Critical' || lvl === 'Extreme') ? '#dc3545' : '#198754';
+    calculateTimelines();
 }
 
-function toggleEmarket(listed) {
-    const alert = document.getElementById('emarkAlert');
-    if(listed) { alert.classList.remove('d-none'); document.getElementById('inputType').value = 'cse'; }
-    else { alert.classList.add('d-none'); document.getElementById('inputType').value = 'goods'; }
-    runFfPLogic();
+function generateNarrative() {
+    const title = document.getElementById('projTitle').value || "[Project]";
+    const mod = document.getElementById('suggestedModality').innerText;
+    const risk = document.getElementById('riskLabel').innerText;
+    document.getElementById('narrativeBox').innerHTML = `<p>Pursuant to <strong>RA 12009</strong>, the strategy for <strong>${title}</strong> utilizes <strong>${mod}</strong>. Given the <strong>${risk} Risk</strong> profile, timelines have been adjusted to ensure rigorous evaluation and Value for Money.</p>`;
 }
-
-function updateReadiness() {
-    let s = 0;
-    if (document.getElementById('marketLandscape').value.length > 5) { s += 20; document.getElementById('stat-1').innerHTML = "🟢 Market"; }
-    if (document.getElementById('suggestedModality').innerText !== "---") { s += 20; document.getElementById('stat-2').innerHTML = "🟢 Logic"; }
-    if (document.querySelector('.selected-risk')) { s += 20; document.getElementById('stat-3').innerHTML = "🟢 Risk"; }
-    if (document.getElementById('targetPostDate').value) { s += 20; document.getElementById('stat-4').innerHTML = "🟢 Time"; }
-    if (document.getElementById('disposalSpecs').value.length > 5) { s += 20; document.getElementById('stat-5').innerHTML = "🟢 Disposal"; }
-    document.getElementById('readinessScore').innerText = s + "%";
-    document.getElementById('readinessBar').style.width = s + "%";
-}
-
-function loadSampleData() {
-    document.getElementById('projTitle').value = "AI-Powered Environmental Monitoring Station";
-    document.getElementById('projABC').value = "15000000";
-    document.getElementById('marketLandscape').value = "Limited local integrators; fast-evolving sensor technology; high demand for real-time data.";
-    document.getElementById('disposalSpecs').value = "Manufacturer-led battery recycling program mandatory at end of life (5 years).";
-    document.getElementById('inputComplexity').value = "high";
-    runFfPLogic();
-}
-
-document.addEventListener('input', updateReadiness);
 </script>
 
 <div class="container mb-4 no-print">
