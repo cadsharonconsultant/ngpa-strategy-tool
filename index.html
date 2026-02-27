@@ -3,62 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NGPA Strategic Procurement Planner | RA 12009</title>
+    <title>NGPA Strategic Planner | RA 12009 Compliance</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
-        :root { --ngpa-blue: #0038a8; --ngpa-gold: #f1c40f; --ngpa-red: #ce1126; }
-        body { background-color: #f1f5f9; font-family: 'Inter', sans-serif; color: #1e293b; }
-        .section-header { border-left: 6px solid var(--ngpa-blue); background: #eef2ff; padding: 15px; margin-bottom: 25px; border-radius: 0 8px 8px 0; font-weight: 700; color: var(--ngpa-blue); }
-        .card { border: none; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); margin-bottom: 2rem; }
-        .risk-cell { height: 60px; border: 2px solid #fff !important; cursor: pointer; transition: 0.2s; position: relative; }
-        .risk-cell:hover { transform: scale(1.05); z-index: 5; border: 2px solid #000 !important; }
-        .selected-risk { border: 4px solid #000 !important; box-shadow: inset 0 0 15px rgba(0,0,0,0.3); }
-        .selected-risk::after { content: '✔️'; font-size: 1.5rem; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .progress { border-radius: 10px; background-color: #334155; }
+        :root { --ngpa-blue: #0038a8; --ngpa-gold: #f1c40f; --ngpa-red: #ce1126; --ngpa-green: #2d6a4f; }
+        body { background-color: #f8fafc; font-family: 'Inter', system-ui, sans-serif; color: #1e293b; line-height: 1.6; }
+        .section-header { border-left: 6px solid var(--ngpa-blue); background: #f0f4ff; padding: 15px; margin-bottom: 25px; border-radius: 0 8px 8px 0; font-weight: 700; color: var(--ngpa-blue); }
+        .card { border: none; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .risk-cell { height: 50px; border: 2px solid #fff !important; cursor: pointer; transition: 0.2s; position: relative; }
+        .selected-risk { border: 4px solid #000 !important; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+        .selected-risk::after { content: '✓'; font-weight: bold; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; }
         
-        /* Print Optimization */
         @media print {
-            .no-print, .btn, .btn-group, .modal-backdrop, .modal { display: none !important; }
-            body { background: #fff; padding: 0; }
+            .no-print { display: none !important; }
+            .card { box-shadow: none !important; border: 1px solid #eee !important; break-inside: avoid; }
+            body { background: white; padding: 0; }
             .container { max-width: 100%; width: 100%; margin: 0; }
-            .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; break-inside: avoid; }
-            .section-header { background: #f8fafc !important; color: #000 !important; border-left: 10px solid #000 !important; }
-            input, textarea, select { border: none !important; background: transparent !important; padding: 0 !important; appearance: none; }
         }
     </style>
 </head>
 <body>
 
-<div class="container py-5">
+<div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4 no-print">
         <div>
-            <h1 class="fw-extrabold text-dark mb-0">NGPA <span class="text-primary">Strategy Builder</span></h1>
-            <p class="text-muted fw-medium">Strategic Planning Framework (RA 12009 Compliance)</p>
+            <h1 class="fw-black mb-0 text-dark">NGPA <span class="text-primary">Planner</span></h1>
+            <p class="text-muted small mb-0">RA 12009 Strategic Procurement Framework</p>
         </div>
         <div class="btn-group shadow-sm">
-            <button class="btn btn-dark fw-bold" data-bs-toggle="modal" data-bs-target="#helpModal">📖 Help Guide</button>
-            <button class="btn btn-outline-primary fw-bold" onclick="loadSampleData()">🧪 Sample Case</button>
-            <button class="btn btn-success fw-bold px-4" onclick="window.print()">📄 Export PDF</button>
+            <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#helpModal">📖 Help</button>
+            <button class="btn btn-outline-primary" onclick="loadSampleData()">🧪 Sample</button>
+            <button class="btn btn-success px-4" onclick="window.print()">📄 Export Report</button>
         </div>
     </div>
 
-    <div class="card bg-dark text-white no-print mb-5 overflow-hidden border-0">
-        <div class="card-body p-4">
+    <div class="card bg-dark text-white no-print mb-5 overflow-hidden">
+        <div class="card-body py-4">
             <div class="row align-items-center">
                 <div class="col-md-3 text-center border-end border-secondary">
-                    <small class="text-uppercase tracking-widest text-secondary fw-bold">Readiness Score</small>
-                    <h1 class="display-3 fw-black mb-0" id="readinessScore">0%</h1>
+                    <small class="text-secondary text-uppercase fw-bold">Readiness Score</small>
+                    <h1 class="display-4 fw-bold mb-0" id="readinessScore">0%</h1>
                 </div>
                 <div class="col-md-9 px-4">
-                    <div class="progress mb-3" style="height: 15px;">
+                    <div class="progress mb-3" style="height: 12px; border-radius: 10px;">
                         <div id="readinessBar" class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: 0%"></div>
                     </div>
-                    <div class="row text-center small fw-bold">
+                    <div class="row text-center small fw-medium">
                         <div class="col" id="stat-1">⚪ Market</div>
                         <div class="col" id="stat-2">⚪ Logic</div>
-                        <div class="col" id="stat-3">⚪ LCC</div>
-                        <div class="col" id="stat-4">⚪ Risk</div>
+                        <div class="col" id="stat-3">⚪ Risks</div>
+                        <div class="col" id="stat-4">⚪ Timeline</div>
                         <div class="col" id="stat-5">⚪ Disposal</div>
                     </div>
                 </div>
@@ -67,206 +62,178 @@
     </div>
 
     <form id="ngpaForm">
-        <div class="card"><div class="card-body">
+        <div class="card shadow-sm"><div class="card-body">
             <div class="row g-4">
-                <div class="col-md-8">
-                    <label class="form-label fw-bold">Project Name / Procurement Activity</label>
-                    <input type="text" id="projTitle" class="form-control form-control-lg bg-light border-0" placeholder="e.g., Solar Energy Modernization Project">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label fw-bold">Approved Budget (ABC)</label>
-                    <div class="input-group input-group-lg">
-                        <span class="input-group-text bg-light border-0">PHP</span>
-                        <input type="number" id="projABC" class="form-control bg-light border-0" placeholder="0.00">
-                    </div>
-                </div>
+                <div class="col-md-8"><label class="fw-bold mb-1">Project Name</label><input type="text" id="projTitle" class="form-control form-control-lg border-0 bg-light"></div>
+                <div class="col-md-4"><label class="fw-bold mb-1">ABC (PHP)</label><input type="number" id="projABC" class="form-control form-control-lg border-0 bg-light" oninput="runFfPLogic()"></div>
             </div>
         </div></div>
 
-        <div class="card"><div class="card-body">
-            <h5 class="section-header">1. Market Scoping (RA 12009 Sec. 10)</h5>
-            <div class="mb-3">
-                <label class="small fw-bold mb-1">Supplier Landscape & Availability</label>
-                <textarea id="marketLandscape" class="form-control bg-light border-0" rows="3" placeholder="Identify number of potential bidders and market maturity..."></textarea>
+        <div class="row g-4 mb-4">
+            <div class="col-md-7">
+                <div class="card shadow-sm h-100"><div class="card-body">
+                    <h5 class="section-header">1. Market Scoping (Sec. 10)</h5>
+                    <textarea id="marketLandscape" class="form-control border-0 bg-light mb-3" rows="4" placeholder="Analysis of suppliers, local availability..."></textarea>
+                    <label class="small fw-bold">Price Volatility</label>
+                    <select id="priceTrend" class="form-select border-0 bg-light"><option>Stable</option><option>High Volatility</option><option>Decreasing</option></select>
+                </div></div>
             </div>
-            <div class="row"><div class="col-md-4">
-                <label class="small fw-bold">Price Trend Analysis</label>
-                <select id="priceTrend" class="form-select bg-light border-0">
-                    <option>Stable</option>
-                    <option>High Volatility (Sensitive)</option>
-                    <option>Decreasing (Tech-driven)</option>
-                </select>
-            </div></div>
-        </div></div>
-
-        <div class="card"><div class="card-body">
-            <h5 class="section-header">2. Whole Life Cycle & Disposal Strategy (Sec. 13)</h5>
-            <div class="row g-3 mb-4">
-                <div class="col-md-4"><label class="small fw-bold">Acquisition Cost</label><input type="number" id="costAcq" class="form-control bg-light border-0"></div>
-                <div class="col-md-4"><label class="small fw-bold">Est. Operation/Maint (Annual)</label><input type="number" id="costOps" class="form-control bg-light border-0"></div>
-                <div class="col-md-4"><label class="small fw-bold">Primary Disposal Method</label>
-                    <select id="disposalMethod" class="form-select bg-light border-0">
-                        <option value="trade-in">Buy-back / Trade-in</option>
-                        <option value="auction">Public Auction</option>
-                        <option value="recycling">Certified Recycling</option>
-                    </select>
-                </div>
+            <div class="col-md-5">
+                <div class="card shadow-sm h-100"><div class="card-body">
+                    <h5 class="section-header">2. Life Cycle Costing</h5>
+                    <label class="small">Acquisition</label><input type="number" id="costAcq" class="form-control bg-light border-0 mb-2">
+                    <label class="small">Maint/Ops (Est.)</label><input type="number" id="costOps" class="form-control bg-light border-0 mb-2">
+                    <label class="small">Residual Value</label><input type="number" id="resVal" class="form-control bg-light border-0">
+                </div></div>
             </div>
-            <div class="mb-0">
-                <label class="small fw-bold mb-1">Detailed Disposal / End-of-Life Plan</label>
-                <textarea id="disposalSpecs" class="form-control bg-light border-0" rows="2" placeholder="e.g., Contractor must take back used batteries for proper hazardous waste disposal."></textarea>
-            </div>
-        </div></div>
-
-        <div class="card border-primary bg-primary bg-opacity-10"><div class="card-body">
-            <h5 class="section-header text-primary">3. Fit-for-Purpose (FfP) Analysis (Sec. 11)</h5>
-            <div class="row g-3 no-print mb-4">
-                <div class="col-md-6">
-                    <label class="small fw-bold">Technical Complexity</label>
-                    <select id="inputComplexity" class="form-select border-0 shadow-sm" onchange="runFfPLogic()">
-                        <option value="standard">Standard / Off-the-Shelf</option>
-                        <option value="complex">Highly Complex / Innovative</option>
-                        <option value="proprietary">Niche / Proprietary</option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label class="small fw-bold">Market Competition</label>
-                    <select id="inputMarket" class="form-select border-0 shadow-sm" onchange="runFfPLogic()">
-                        <option value="many">High Competition (Many Bidders)</option>
-                        <option value="few">Restricted Market (Few Bidders)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="alert bg-primary text-white shadow mb-0">
-                <h6 class="fw-bold mb-1">Recommended Modality: <span id="suggestedModality">---</span></h6>
-                <p id="modalityJustification" class="small mb-0 opacity-75">Update complexity and market settings to see the legal justification.</p>
-            </div>
-        </div></div>
-
-        <div class="card"><div class="card-body">
-            <h5 class="section-header text-danger">4. Risk Management Matrix</h5>
-            <div class="row align-items-center">
-                <div class="col-md-5">
-                    <table class="table table-bordered text-center m-0">
-                        <tr><th rowspan="3" class="small vertical-text text-muted" style="writing-mode: vertical-rl; transform: rotate(180deg);">IMPACT</th>
-                            <td class="risk-cell bg-warning" data-level="High" onclick="setRisk(this)"></td><td class="risk-cell bg-danger text-white" data-level="Extreme" onclick="setRisk(this)"></td></tr>
-                        <tr><td class="risk-cell bg-success text-white" data-level="Low" onclick="setRisk(this)"></td><td class="risk-cell bg-warning" data-level="Medium" onclick="setRisk(this)"></td></tr>
-                        <tr><th colspan="2" class="small text-muted">PROBABILITY →</th></tr>
-                    </table>
-                </div>
-                <div class="col-md-7">
-                    <div class="p-4 bg-light rounded shadow-sm">
-                        <div class="d-flex justify-content-between">
-                            <strong>Level:</strong> <span id="riskLabel" class="badge bg-dark px-3">NONE</span>
-                        </div>
-                        <hr>
-                        <strong>Recommended Strategy:</strong>
-                        <p id="riskStrategy" class="small text-muted mb-0">Click a cell in the matrix to identify the risk treatment plan.</p>
-                    </div>
-                </div>
-            </div>
-        </div></div>
-
-        <div class="card"><div class="card-body">
-            <h5 class="section-header text-success">5. Sustainability & Consultations</h5>
-            <div class="mb-4">
-                <div class="form-check form-check-inline"><input class="form-check-input gpp-check" type="checkbox" id="g1" onchange="updateReadiness()"><label class="form-check-label small" for="g1">Energy Efficient</label></div>
-                <div class="form-check form-check-inline"><input class="form-check-input gpp-check" type="checkbox" id="g2" onchange="updateReadiness()"><label class="form-check-label small" for="g2">Recyclable Specs</label></div>
-                <div class="form-check form-check-inline"><input class="form-check-input gpp-check" type="checkbox" id="g3" onchange="updateReadiness()"><label class="form-check-label small" for="g3">Socially Responsible</label></div>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-sm table-bordered">
-                    <thead class="bg-light small"><tr><th>Date</th><th>Stakeholder</th><th>Outcome</th><th class="no-print">Action</th></tr></thead>
-                    <tbody id="consultBody"></tbody>
-                </table>
-                <button type="button" class="btn btn-sm btn-info text-white no-print fw-bold" onclick="addConsultationRow()">+ Add Consultation Log</button>
-            </div>
-        </div></div>
-    </form>
-
-    <div class="mt-5 pt-4 border-top no-print text-center">
-        <p class="text-muted small"><strong>Version 1.2 | Feb 2026 Update</strong> - RA 12009 (NGPA) Strategic Framework Edition</p>
-    </div>
-</div>
-
-<div class="modal fade" id="helpModal" tabindex="-1">
-    <div class="modal-dialog modal-lg"><div class="modal-content border-0 shadow-lg">
-        <div class="modal-header bg-dark text-white"><h5 class="modal-title fw-bold">RA 12009 Compliance Guide</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
-        <div class="modal-body p-4">
-            <h6 class="fw-bold text-primary">Strategic Planning (Sec. 10)</h6>
-            <p class="small">The new law mandates market scoping to ensure the ABC is realistic. The reports generated here serve as your audit trail.</p>
-            <h6 class="fw-bold text-primary">Life Cycle Costing (Sec. 13)</h6>
-            <p class="small">VfM is no longer just the lowest bid. You must account for repairs, electricity, and disposal in your evaluation.</p>
-            <h6 class="fw-bold text-primary">Disposal Strategy</h6>
-            <p class="small">Sec. 56 requires you to plan for the asset's "death" (recycling or trade-in) before you even post the bid.</p>
         </div>
-    </div></div>
+
+        <div class="card border-primary shadow-sm"><div class="card-body">
+            <h5 class="section-header text-primary">3. Fit-for-Purpose & Proportionality Test</h5>
+            <div class="row g-3 no-print mb-4">
+                <div class="col-md-4"><label class="small fw-bold">Complexity</label><select id="inputComplexity" class="form-select border-0 bg-light" onchange="runFfPLogic()"><option value="standard">Standard</option><option value="complex">High Tech</option><option value="niche">Proprietary</option></select></div>
+                <div class="col-md-4"><label class="small fw-bold">Market Depth</label><select id="inputMarket" class="form-select border-0 bg-light" onchange="runFfPLogic()"><option value="many">Competitive</option><option value="few">Limited</option><option value="single">Single Source</option></select></div>
+                <div class="col-md-4"><label class="small fw-bold">Urgency</label><select id="inputUrgency" class="form-select border-0 bg-light" onchange="runFfPLogic()"><option value="normal">Routine</option><option value="high">Urgent</option></select></div>
+            </div>
+            <div id="ffpResultBox" class="p-4 rounded border-start border-5" style="background: #f0f7ff; border-color: #0d6efd;">
+                <h4 class="fw-bold mb-1"><span id="suggestedModality">Analyzing...</span> <span id="propBadge" class="badge rounded-pill small ms-2">--</span></h4>
+                <p id="modalityJustification" class="small mb-0 text-muted">Select parameters to see logic.</p>
+            </div>
+        </div></div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100"><div class="card-body">
+                    <h5 class="section-header text-danger">4. Risk Management</h5>
+                    <table class="table table-bordered text-center m-0" style="table-layout: fixed;">
+                        <tr><td class="risk-cell bg-warning" data-level="High" onclick="setRisk(this)"></td><td class="risk-cell bg-danger" data-level="Extreme" onclick="setRisk(this)"></td></tr>
+                        <tr><td class="risk-cell bg-success" data-level="Low" onclick="setRisk(this)"></td><td class="risk-cell bg-warning" data-level="Medium" onclick="setRisk(this)"></td></tr>
+                    </table>
+                    <div class="mt-3 small p-2 bg-light rounded"><strong>Strategy:</strong> <span id="riskStrategy">Select cell.</span></div>
+                </div></div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100 border-warning"><div class="card-body">
+                    <h5 class="section-header text-warning">5. End-of-Life Disposal</h5>
+                    <select id="disposalMethod" class="form-select mb-2 border-0 bg-light"><option>Buy-back/Trade-in</option><option>Auction</option><option>Recycling</option></select>
+                    <textarea id="disposalSpecs" class="form-control border-0 bg-light" rows="3" placeholder="Disposal specs for PBD..."></textarea>
+                </div></div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-7">
+                <div class="card shadow-sm h-100"><div class="card-body">
+                    <h5 class="section-header text-info">6. PhilGEPS Milestones</h5>
+                    <label class="small fw-bold">Target Posting Date</label><input type="date" id="targetPostDate" class="form-control border-0 bg-light mb-3" onchange="calculateTimelines()">
+                    <div class="row g-2 text-center">
+                        <div class="col-4 p-2 border rounded"><small class="x-small fw-bold">SUBMISSION</small><div id="dateSubmission" class="fw-bold text-primary">---</div></div>
+                        <div class="col-4 p-2 border rounded"><small class="x-small fw-bold">AWARD (MAX)</small><div id="dateAward" class="fw-bold text-success">---</div></div>
+                        <div class="col-4 p-2 border rounded"><small class="x-small fw-bold">CONTRACT</small><div id="dateContract" class="fw-bold text-dark">---</div></div>
+                    </div>
+                </div></div>
+            </div>
+            <div class="col-md-5">
+                <div class="card shadow-sm h-100"><div class="card-body">
+                    <h5 class="section-header">7. Mandatory PhilGEPS Docs</h5>
+                    <div id="docChecklist" class="small">
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked disabled><label class="form-check-label">Sec VI: Schedule of Req.</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked disabled><label class="form-check-label">Sec VII: Tech Specs</label></div>
+                        <div id="dynamicDocs"></div>
+                    </div>
+                </div></div>
+            </div>
+        </div>
+    </form>
 </div>
+
+<div class="modal fade" id="helpModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-dark text-white"><h5 class="modal-title">NGPA Guide</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body small">Strategic Planning is now mandatory under RA 12009. Ensure your LCC and Risk scores are balanced before posting.</div></div></div></div>
 
 <script>
-// 1. READINESS LOGIC
+// INITIALIZATION
+window.addEventListener('DOMContentLoaded', () => { runFfPLogic(); });
+
+// LOGIC ENGINES
+function runFfPLogic() {
+    const abc = parseFloat(document.getElementById('projABC').value) || 0;
+    const comp = document.getElementById('inputComplexity').value;
+    const mark = document.getElementById('inputMarket').value;
+    const urg = document.getElementById('inputUrgency').value;
+    
+    let mod = "Competitive Bidding"; let just = "Sec 10 Default."; let color = "#0d6efd";
+    
+    if (mark === "single") { mod = "Direct Sales/Acquisition"; color = "#fd7e14"; just = "Proprietary items only."; }
+    else if (urg === "high") { mod = "Negotiated (Emergency)"; color = "#dc3545"; just = "Critical timeline need."; }
+    else if (comp === "complex") { mod = "Competitive Dialogue"; color = "#6610f2"; just = "Innovative tech needs dialogue."; }
+
+    document.getElementById('suggestedModality').innerText = mod;
+    document.getElementById('suggestedModality').style.color = color;
+    document.getElementById('modalityJustification').innerText = just;
+    document.getElementById('ffpResultBox').style.borderColor = color;
+
+    // Proportionality Badge
+    const badge = document.getElementById('propBadge');
+    if (abc > 50000000 && comp === "standard") { badge.innerText = "HIGH RISK"; badge.className = "badge bg-warning text-dark ms-2"; }
+    else if (abc < 1000000 && comp === "complex") { badge.innerText = "INEFFICIENT"; badge.className = "badge bg-danger ms-2"; }
+    else { badge.innerText = "PROPORTIONAL"; badge.className = "badge bg-success ms-2"; }
+
+    updateChecklist(mod);
+    calculateTimelines();
+    updateReadiness();
+}
+
+function updateChecklist(mod) {
+    let docs = "";
+    if (mod.includes("Bidding")) docs += "<div>✔️ Section VIII: Technical Checklist</div>";
+    if (mod.includes("Dialogue")) docs += "<div>✔️ Dialogue Protocol Document</div>";
+    if (mod.includes("Negotiated")) docs += "<div>✔️ Justification Resolution</div>";
+    document.getElementById('dynamicDocs').innerHTML = docs;
+}
+
+function calculateTimelines() {
+    const d = document.getElementById('targetPostDate').value; if (!d) return;
+    const post = new Date(d); const mod = document.getElementById('suggestedModality').innerText;
+    let postDays = 20; let awardDays = 90;
+    if (mod.includes("Negotiated") || mod.includes("Direct")) { postDays = 3; awardDays = 30; }
+    
+    const sub = new Date(post); sub.setDate(post.getDate() + postDays);
+    const awd = new Date(sub); awd.setDate(sub.getDate() + awardDays);
+    const con = new Date(awd); con.setDate(awd.getDate() + 10);
+    
+    const opt = { month: 'short', day: 'numeric', year: 'numeric' };
+    document.getElementById('dateSubmission').innerText = sub.toLocaleDateString(undefined, opt);
+    document.getElementById('dateAward').innerText = awd.toLocaleDateString(undefined, opt);
+    document.getElementById('dateContract').innerText = con.toLocaleDateString(undefined, opt);
+}
+
+function setRisk(el) {
+    document.querySelectorAll('.risk-cell').forEach(c => c.classList.remove('selected-risk'));
+    el.classList.add('selected-risk');
+    document.getElementById('riskLabel').innerText = el.dataset.level;
+    document.getElementById('riskStrategy').innerText = el.dataset.level === 'Extreme' ? "Mitigate before posting." : "Monitor.";
+    updateReadiness();
+}
+
 function updateReadiness() {
     let s = 0;
-    if(document.getElementById('marketLandscape').value.length > 10) { s += 20; document.getElementById('stat-1').innerHTML = "🟢 Market"; }
-    if(document.getElementById('suggestedModality').innerText !== "---") { s += 20; document.getElementById('stat-2').innerHTML = "🟢 Logic"; }
-    if(document.getElementById('costAcq').value > 0) { s += 20; document.getElementById('stat-3').innerHTML = "🟢 LCC"; }
-    if(document.querySelector('.selected-risk')) { s += 20; document.getElementById('stat-4').innerHTML = "🟢 Risk"; }
-    if(document.getElementById('disposalSpecs').value.length > 10) { s += 20; document.getElementById('stat-5').innerHTML = "🟢 Disposal"; }
-    
+    if (document.getElementById('marketLandscape').value.length > 10) { s += 20; document.getElementById('stat-1').innerHTML = "🟢 Market"; }
+    if (document.getElementById('suggestedModality').innerText !== "Analyzing...") { s += 20; document.getElementById('stat-2').innerHTML = "🟢 Logic"; }
+    if (document.querySelector('.selected-risk')) { s += 20; document.getElementById('stat-3').innerHTML = "🟢 Risk"; }
+    if (document.getElementById('targetPostDate').value) { s += 20; document.getElementById('stat-4').innerHTML = "🟢 Time"; }
+    if (document.getElementById('disposalSpecs').value.length > 5) { s += 20; document.getElementById('stat-5').innerHTML = "🟢 Disposal"; }
     document.getElementById('readinessScore').innerText = s + "%";
     document.getElementById('readinessBar').style.width = s + "%";
 }
 
-// 2. FfP LOGIC
-function runFfPLogic() {
-    const c = document.getElementById('inputComplexity').value;
-    const m = document.getElementById('inputMarket').value;
-    let mod = "Competitive Bidding";
-    let just = "Best for standard needs with multiple players.";
-    
-    if(c === "complex" && m === "few") { mod = "Competitive Dialogue"; just = "Negotiate solutions for innovation-driven specs."; }
-    else if(c === "proprietary") { mod = "Direct Sales"; just = "Proprietary items from unique makers."; }
-    
-    document.getElementById('suggestedModality').innerText = mod;
-    document.getElementById('modalityJustification').innerText = just;
-    updateReadiness();
-}
-
-// 3. RISK LOGIC
-function setRisk(el) {
-    document.querySelectorAll('.risk-cell').forEach(c => c.classList.remove('selected-risk'));
-    el.classList.add('selected-risk');
-    const lvl = el.getAttribute('data-level');
-    document.getElementById('riskLabel').innerText = lvl;
-    let strategy = "Standard oversight.";
-    if(lvl === 'Extreme') strategy = "HIGH RISK: Requires immediate mitigation and possible Competitive Dialogue.";
-    else if(lvl === 'High') strategy = "MITIGATE: Strict performance security and frequent monitoring required.";
-    document.getElementById('riskStrategy').innerText = strategy;
-    updateReadiness();
-}
-
-// 4. UTILITY
-function addConsultationRow() {
-    const row = `<tr><td><input type="date" class="form-control form-control-sm border-0"></td><td><input type="text" class="form-control form-control-sm border-0"></td><td><input type="text" class="form-control form-control-sm border-0"></td><td class="no-print"><button type="button" class="btn btn-sm btn-danger" onclick="this.closest('tr').remove()">×</button></td></tr>`;
-    document.getElementById('consultBody').insertAdjacentHTML('beforeend', row);
-}
-
 function loadSampleData() {
-    document.getElementById('projTitle').value = "Smart Solar Grid Modernization";
-    document.getElementById('projABC').value = "25000000";
-    document.getElementById('marketLandscape').value = "Limited local integrators; price of panels dropping but battery supply is volatile.";
-    document.getElementById('costAcq').value = "22000000";
-    document.getElementById('costOps').value = "500000";
-    document.getElementById('disposalSpecs').value = "Mandatory Buy-Back at Year 10 for safe lithium recycling.";
+    document.getElementById('projTitle').value = "AI-Driven Smart Traffic Management";
+    document.getElementById('projABC').value = "45000000";
+    document.getElementById('marketLandscape').value = "Emerging market; few local providers; requires high-end hardware.";
+    document.getElementById('disposalSpecs').value = "End-of-life battery disposal at year 8 via trade-in.";
     document.getElementById('inputComplexity').value = "complex";
-    document.getElementById('inputMarket').value = "few";
     runFfPLogic();
 }
-
-// LISTENERS
-document.addEventListener('input', updateReadiness);
 </script>
-
 
 <div class="container mb-4 no-print">
     <div class="row g-3">
