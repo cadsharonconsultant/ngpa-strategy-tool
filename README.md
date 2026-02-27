@@ -1,0 +1,1 @@
+# ngpa-strategy-tool
